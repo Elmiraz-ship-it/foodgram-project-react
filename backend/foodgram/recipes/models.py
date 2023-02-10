@@ -6,19 +6,19 @@ User = get_user_model()
 
 # Create your models here.
 class Tag(models.Model):
-    title = models.CharField(max_length=32)
+    name = models.CharField(max_length=32)
     color = models.CharField(max_length=32)
 
     def __str__(self) -> str:
-        return self.title
+        return self.name
         
 
 class Ingredient(models.Model):
-    title = models.CharField(max_length=32)
-    metric = models.CharField(max_length=32)
+    name = models.CharField(max_length=32)
+    mesurement_unit = models.CharField(max_length=32)
 
     def __str__(self) -> str:
-        return self.title
+        return self.name
 
 
 class IngredientToRecipe(models.Model):
@@ -29,9 +29,9 @@ class IngredientToRecipe(models.Model):
 
 class Recipe(models.Model):
     author = models.ForeignKey(User, on_delete=models.CASCADE)
-    title = models.CharField(max_length=32)
-    description = models.TextField(max_length=512, null=True, blank=True)
-    time_to_cook = models.IntegerField(null=True, blank=True)
+    name = models.CharField(max_length=32)
+    text = models.TextField(max_length=512, null=True, blank=True)
+    cooking_time = models.IntegerField(null=True, blank=True)
     tag = models.ManyToManyField(Tag)
     
     def add_ingredient(self, ingr, amount):
@@ -45,4 +45,4 @@ class Recipe(models.Model):
         return ingredients
 
     def __str__(self) -> str:
-        return self.title
+        return self.name
