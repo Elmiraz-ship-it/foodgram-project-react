@@ -28,7 +28,7 @@ class IngredientToRecipe(models.Model):
 
 
 class Recipe(models.Model):
-    author = models.ForeignKey(User, on_delete=models.CASCADE)
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name='recipes')
     name = models.CharField(max_length=32)
     text = models.TextField(max_length=512, null=True, blank=True)
     cooking_time = models.IntegerField(null=True, blank=True)
