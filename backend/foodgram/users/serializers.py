@@ -24,7 +24,7 @@ class FollowSerializer(serializers.ModelSerializer):
 
     def get_is_subscribed(self, obj):
         current_user = obj.user
-        return current_user in obj.author.follower.all()
+        return current_user in obj.author.get_subscribes_on()
 
     class Meta:
         model = Follow

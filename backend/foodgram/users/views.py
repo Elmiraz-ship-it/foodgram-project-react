@@ -25,3 +25,11 @@ class SubscribeAPIView(ListAPIView):
                 serializer = FollowSerializer(new_follow)
                 return Response(serializer.data, status=201)
         return Response(status=400)
+
+    def delete(self, request, pk=None):
+        if pk is not None:
+            author = get_object_or_404(User, id=pk)
+            result = request.user.unsubscribe_from(author)
+            return Response(status=204)
+        if not result:
+            return Response(status=400)
