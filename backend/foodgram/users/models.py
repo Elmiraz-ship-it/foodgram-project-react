@@ -23,6 +23,7 @@ class CustomUser(AbstractUser):
     email = models.EmailField('Email', max_length=255, unique=True)
     first_name = models.CharField('Имя', max_length=150, blank=True, null=True)
     last_name = models.CharField('Фамилия', max_length=150, blank=True, null=True)
+    favourite = models.ManyToManyField('recipes.Recipe', related_name='favourite')
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username', 'first_name', 'last_name', 'password']
@@ -49,3 +50,4 @@ class CustomUser(AbstractUser):
             return True
         except Follow.DoesNotExist:
             return False
+

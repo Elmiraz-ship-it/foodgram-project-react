@@ -1,6 +1,8 @@
 from rest_framework.response import Response
 from rest_framework.generics import ListCreateAPIView, ListAPIView
+from rest_framework.views import APIView
 from django_filters import rest_framework as filters
+from django.shortcuts import get_object_or_404
 
 from recipes.models import Recipe, Tag, Ingredient
 from api.serializers import RecipeSerializer, TagSerializer, IngredientSerializer, CreateRecipeSerializer
@@ -34,3 +36,12 @@ class IngredientApiView(ListAPIView):
     queryset = Ingredient.objects.all()
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = IngredientsFilterSet
+
+
+class FavouriteAPIView(APIView):
+    def post(self, request, pk=None):
+        if pk is not None:
+            recipe = get_object_or_404(Recipe, id=pk)
+            request.user.favourite.add(recipe)
+            return Response(status=201)
+        return Response(status=404)
