@@ -20,6 +20,12 @@ class IngredientSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class RecipeShoppingCartSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Recipe
+        fields = ['id', 'name', 'cooking_time']
+
+
 class RecipeIngredientsSerializer(serializers.Serializer):
     id = serializers.IntegerField()
     amount = serializers.IntegerField()
