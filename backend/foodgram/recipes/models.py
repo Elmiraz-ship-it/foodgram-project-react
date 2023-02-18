@@ -15,7 +15,7 @@ class Tag(models.Model):
 
 class Ingredient(models.Model):
     name = models.CharField(max_length=32)
-    mesurement_unit = models.CharField(max_length=32)
+    measurement_unit = models.CharField(max_length=32)
 
     def __str__(self) -> str:
         return self.name
@@ -33,6 +33,7 @@ class Recipe(models.Model):
     text = models.TextField(max_length=512, null=True, blank=True)
     cooking_time = models.IntegerField(null=True, blank=True)
     tag = models.ManyToManyField(Tag)
+    image = models.ImageField(upload_to='images/', null=True, blank=True)
     
     def add_ingredient(self, ingr, amount):
         new = IngredientToRecipe(recipe=self, ingredient=ingr, amount=amount)

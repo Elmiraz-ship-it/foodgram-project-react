@@ -7,7 +7,7 @@ from users.models import Follow
 class RecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
-        fields = ['id', 'name', 'cooking_time']
+        fields = ['id', 'name', 'cooking_time', 'image']
 
 class FollowSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(source='author.email')

@@ -27,7 +27,7 @@ class CustomUser(AbstractUser):
     shopping_cart = models.ManyToManyField('recipes.Recipe', related_name='shopping_cart')
 
     USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = ['username', 'first_name', 'last_name', 'password']
+    REQUIRED_FIELDS = ['username', 'first_name', 'last_name']
 
     def __str__(self) -> str:
         return f'{self.username}:{self.email}'
