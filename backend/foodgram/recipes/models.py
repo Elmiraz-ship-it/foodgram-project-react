@@ -32,7 +32,7 @@ class Recipe(models.Model):
     name = models.CharField(max_length=32)
     text = models.TextField(max_length=512, null=True, blank=True)
     cooking_time = models.IntegerField(null=True, blank=True)
-    tag = models.ManyToManyField(Tag)
+    tags = models.ManyToManyField(Tag)
     image = models.ImageField(upload_to='images/', null=True, blank=True)
     
     def add_ingredient(self, ingr, amount):
@@ -42,7 +42,7 @@ class Recipe(models.Model):
     def get_ingredients(self):
         ingredients = {}
         for i in self.to_recipe.all():
-            ingredients[i.ingredient.title] = i.amount
+            ingredients[i.ingredient.name] = i.amount
         return ingredients
 
     def __str__(self) -> str:

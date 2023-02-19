@@ -1,17 +1,21 @@
 from rest_framework.response import Response
-from rest_framework.generics import ListCreateAPIView, ListAPIView
+from rest_framework.generics import ListCreateAPIView, ListAPIView, UpdateAPIView, DestroyAPIView
 from rest_framework.views import APIView
 from django_filters import rest_framework as filters
+from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
-from api.utils.to_csv import data_to_csv
+from api.utils.process_download import to_download_shopping_cart
 
 from recipes.models import Recipe, Tag, Ingredient
 from api.serializers import RecipeSerializer, TagSerializer, IngredientSerializer, CreateRecipeSerializer, RecipeShoppingCartSerializer
 
 
-class RecipeApiView(ListCreateAPIView):
+class RecipeApiView(ListCreateAPIView, UpdateAPIView, DestroyAPIView):
     serializer_class = RecipeSerializer
-    queryset = Recipe.objects.all()
+    http_method_names = ['get', 'post', 'patch', 'delete']
+
+    def get_queryset(self):
+        return Recipe.objects.filter(author=self.request.user)
 
     def post(self, request):
         serializer = CreateRecipeSerializer(data=request.data)
@@ -58,7 +62,14 @@ class FavouriteAPIView(APIView):
 class ShoppingCartAPIView(APIView):
     def get(self, request):
         shopping_cart = request.user.shopping_cart.values()
-        data_to_csv(shopping_cart, 'shopping_cart.csv')
+        if shopping_cart:
+            path_to_file = to_download_shopping_cart(shopping_cart, request.user.username)
+            if path_to_file:
+                filename = path_to_file.split('\\')[-1]
+                with open(path_to_file, 'r', encoding='utf-8') as file:
+                    response = HttpResponse(file, content_type='text/txt')
+                    response['Content-Disposition'] = f'attachment; filename={filename}'
+                    return response
         return Response(status=200)
 
     def post(self, request, pk=None):

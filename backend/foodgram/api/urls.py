@@ -5,7 +5,7 @@ from api.views import RecipeApiView, TagApiView, IngredientApiView, FavouriteAPI
 urlpatterns = [
     path('recipes/', RecipeApiView.as_view()),
     path('recipes/<int:pk>/', RecipeApiView.as_view()),
-    path('recipes/download/', ShoppingCartAPIView.as_view()),
+    path('recipes/shopping_cart/download/', ShoppingCartAPIView.as_view()),
     path('recipes/<int:pk>/favourite/', FavouriteAPIView.as_view()),
     path('recipes/<int:pk>/shopping_cart/', ShoppingCartAPIView.as_view()),
     path('tags/', TagApiView.as_view()),
