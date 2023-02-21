@@ -1,5 +1,12 @@
-from django.urls import path
-from api.views import RecipeApiView, TagApiView, IngredientApiView, FavouriteAPIView, ShoppingCartAPIView
+from django.urls import include, path
+from api.views import (
+    IngredientApiView,
+    FavouriteAPIView,
+    RecipeApiView,
+    ShoppingCartAPIView,
+    SubscribeAPIView,
+    TagApiView,
+)
 
 
 urlpatterns = [
@@ -14,3 +21,11 @@ urlpatterns = [
     path('ingredients/<int:pk>/', IngredientApiView.as_view()),
 ]
     
+users_urlpatterns = [
+    path('auth/', include('djoser.urls.authtoken')),
+    path('auth/', include('djoser.urls')),
+    path('subscriptions/', SubscribeAPIView.as_view()),
+    path('<int:pk>/subscribe/', SubscribeAPIView.as_view())
+]
+
+urlpatterns.extend(users_urlpatterns)
