@@ -18,6 +18,7 @@ djoser==2.1.0
 idna==3.4
 importlib-metadata==1.7.0
 ipython==7.34.0
+isort==5.11.5
 itypes==1.2.0
 jedi==0.18.2
 Jinja2==3.1.2
@@ -28,6 +29,7 @@ parso==0.8.3
 pickleshare==0.7.5
 Pillow==9.4.0
 prompt-toolkit==3.0.36
+psycopg2-binary==2.8.6
 pycparser==2.21
 Pygments==2.14.0
 PyJWT==2.6.0

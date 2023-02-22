@@ -1,13 +1,13 @@
 from rest_framework import serializers
 
 from recipes.models import Tag, Ingredient, Recipe
+from users.models import Follow
+
 
 class RecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = '__all__'
-
-
 
 
 class TagSerializer(serializers.ModelSerializer):
@@ -50,10 +50,9 @@ class CreateRecipeSerializer(serializers.Serializer):
     def save(self, **kwargs):
         data = self.validated_data
         author = kwargs.get('author')
-        if author is None:
-            print('Нет автора')
-            return
-        ingredients = data['ingredients']
+        ingredients = data.get('ingredients')
+        if not ingredients:
+            return False
         name = data['name']
         text = data['text']
         cooking_time = data['cooking_time']
@@ -72,9 +71,6 @@ class CreateRecipeSerializer(serializers.Serializer):
             amount = item['amount']
             new.add_ingredient(ingr, amount)
 
-
-from recipes.models import Recipe
-from users.models import Follow
 
 class FollowRecipeSerializer(serializers.ModelSerializer):
     class Meta:
