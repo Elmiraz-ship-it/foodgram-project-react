@@ -7,17 +7,24 @@ services:
     environment:
       - POSTGRES_DB=postgres
       - POSTGRES_USER=postgres
-      - POSTGRES_PASWORD=postgres
+      - POSTGRES_PASSWORD=qwerty
     ports: 
       - "5432:5432"
+    restart: always
+  migration:
+    build:
+      context: ../backend/foodgram
+      dockerfile: Dockerfile
+    command: python manage.py migrate
+    depends_on:
+      - db
   web:
     build:
       context: ../backend/foodgram
       dockerfile: Dockerfile
-    command: 
-      - python manage.py runserver 0.0.0.0:8000
-      - python manage.py migrate
+    command: python manage.py runserver 0.0.0.0:8000
     ports:
       - "8000:8000"
     depends_on:
       - db
+      - migration
