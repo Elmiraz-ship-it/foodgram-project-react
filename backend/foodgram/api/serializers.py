@@ -39,24 +39,18 @@ class RecipeTagSerializer(serializers.ModelSerializer):
         fields = ['id']
 
 
-class CreateRecipeSerializer(serializers.Serializer):
+class CreateRecipeSerializer(serializers.ModelSerializer):
     ingredients = RecipeIngredientsSerializer(many=True)
-    tags = serializers.ListField()
-    image = serializers.ImageField(required=False)
-    name = serializers.CharField()
-    text = serializers.CharField()
-    cooking_time = serializers.IntegerField()
 
-    def save(self, **kwargs):
-        data = self.validated_data
+    def create(self, validated_data, **kwargs):
         author = kwargs.get('author')
-        ingredients = data.get('ingredients')
+        ingredients = validated_data.get('ingredients')
         if not ingredients:
             return False
-        name = data['name']
-        text = data['text']
-        cooking_time = data['cooking_time']
-        tags = [Tag.objects.get(pk=id) for id in data['tags']]
+        name = validated_data['name']
+        text = validated_data['text']
+        cooking_time = validated_data['cooking_time']
+        tags = [Tag.objects.get(pk=id) for id in validated_data['tags']]
         new = Recipe(
             name=name,
             text=text,
@@ -70,6 +64,7 @@ class CreateRecipeSerializer(serializers.Serializer):
             ingr = Ingredient.objects.get(id=item['id'])
             amount = item['amount']
             new.add_ingredient(ingr, amount)
+        return new
 
 
 class FollowRecipeSerializer(serializers.ModelSerializer):

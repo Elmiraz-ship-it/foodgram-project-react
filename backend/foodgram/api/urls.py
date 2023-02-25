@@ -12,6 +12,7 @@ from api.views import (
 urlpatterns = [
     path('recipes/', RecipeApiView.as_view()),
     path('recipes/<int:pk>/', RecipeApiView.as_view()),
+    # path('recipes/test/', RecipeApiView.as_view()),
     path('recipes/shopping_cart/download/', ShoppingCartAPIView.as_view()),
     path('recipes/<int:pk>/favourite/', FavouriteAPIView.as_view()),
     path('recipes/<int:pk>/shopping_cart/', ShoppingCartAPIView.as_view()),

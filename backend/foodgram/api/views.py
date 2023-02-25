@@ -11,6 +11,8 @@ from rest_framework.generics import (
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
+# from rest_framework.decorators import action
+# from rest_framework.viewsets import ViewSet
 
 from api.serializers import (
     CreateRecipeSerializer,
@@ -37,6 +39,10 @@ class RecipeApiView(ListCreateAPIView, UpdateAPIView, DestroyAPIView):
         serializer.is_valid(raise_exception=True)
         serializer.save(author=request.user)
         return Response(serializer.validated_data)
+
+    # @action(detail=False, methods=['get'])
+    # def test(self, request):
+    #     return Response({'test':'test'})
 
 
 class TagApiView(ListAPIView):
@@ -105,7 +111,7 @@ class ShoppingCartAPIView(APIView):
         return Response(status=status.HTTP_404_NOT_FOUND)
 
 
-class SubscribeAPIView(ListAPIView):
+class SubscribeAPIView(ListCreateAPIView, DestroyAPIView):
     pagination_class = LimitOffsetPagination
     serializer_class = FollowSerializer
 

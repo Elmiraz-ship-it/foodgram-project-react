@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.db import models
+from django.core.validators import MaxValueValidator, MinValueValidator
 
 from users.models import CustomUser as User
 
@@ -18,7 +19,7 @@ class Tag(models.Model):
         
 
 class Ingredient(models.Model):
-    name = models.CharField(max_length=32, verbose_name='Название')
+    name = models.CharField(max_length=255, verbose_name='Название')
     measurement_unit = models.CharField(
         max_length=32,
         verbose_name='Единица измерения'
@@ -46,7 +47,13 @@ class IngredientToRecipe(models.Model):
         related_name='to_recipe',
         verbose_name='Ингредиент'
     )
-    amount = models.PositiveIntegerField(verbose_name='Количество')
+    amount = models.PositiveIntegerField(
+        validators=[
+            MinValueValidator(1, 'Количество не может быть меньше 1'),
+            MaxValueValidator(2000, 'Количество не может быть больше 2000')
+        ],
+        verbose_name='Количество'
+    )
 
 
 class Recipe(models.Model):
@@ -56,12 +63,15 @@ class Recipe(models.Model):
         related_name='recipes',
         verbose_name='Автор'
     )
-    name = models.CharField(max_length=64, verbose_name='Название')
+    name = models.CharField(max_length=255, verbose_name='Название')
     text = models.TextField(
-        max_length=512,
         verbose_name='Описание'
     )
     cooking_time = models.PositiveIntegerField(
+        validators=[
+            MinValueValidator(1, 'Время приготовления не может быть меньше 1 мин'),
+            MaxValueValidator(2000, 'Время приготовления не может быть больше 2000 мин')
+        ],
         verbose_name='Время приготовления, мин.'
     )
     tags = models.ManyToManyField(
