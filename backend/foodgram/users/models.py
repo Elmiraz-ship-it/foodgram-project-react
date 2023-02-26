@@ -32,24 +32,4 @@ class CustomUser(AbstractUser):
 
     def __str__(self) -> str:
         return f'{self.username}:{self.email}'
-    
-    def new_follow(self, author: 'CustomUser') -> Optional[Follow]:
-        try:
-            new = Follow(user=self, author=author)
-            new.save()
-            return new
-        except Exception as e:
-            print('follow error:', str(e))
-            return None
-
-    def get_subscribes_on(self) -> List['CustomUser']:
-        subs = [f.author for f in self.follower.all().select_related('author')]
-        return subs
-
-    def unsubscribe_from(self, author: 'CustomUser') -> bool:
-        try:
-            Follow.objects.get(user=self, author=author).delete()
-            return True
-        except Follow.DoesNotExist:
-            return False
 

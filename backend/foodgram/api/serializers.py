@@ -2,6 +2,8 @@ from rest_framework import serializers
 
 from recipes.models import Tag, Ingredient, Recipe
 from users.models import Follow
+from users.utils import get_subscribes_on
+from recipes.utils import add_ingredient
 
 
 class RecipeSerializer(serializers.ModelSerializer):
@@ -63,7 +65,7 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         for item in ingredients:
             ingr = Ingredient.objects.get(id=item['id'])
             amount = item['amount']
-            new.add_ingredient(ingr, amount)
+            add_ingredient(new, ingr, amount)
         return new
 
 
@@ -87,7 +89,7 @@ class FollowSerializer(serializers.ModelSerializer):
 
     def get_is_subscribed(self, obj):
         current_user = obj.user
-        return current_user in obj.author.get_subscribes_on()
+        return current_user in get_subscribes_on(obj.author)
 
     class Meta:
         model = Follow

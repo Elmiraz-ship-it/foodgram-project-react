@@ -77,7 +77,6 @@ class Recipe(models.Model):
     tags = models.ManyToManyField(
         Tag,
         blank=True,
-        null=True,
         verbose_name='Теги'
     )
     image = models.ImageField(
@@ -87,16 +86,7 @@ class Recipe(models.Model):
         verbose_name='Изображение'
     )
     
-    def add_ingredient(self, ingr, amount):
-        new = IngredientToRecipe(recipe=self, ingredient=ingr, amount=amount)
-        new.save()
-    
-    def get_ingredients(self):
-        ingredients = {}
-        for i in self.to_recipe.all():
-            ingredients[i.ingredient.name] = i.amount
-        return ingredients
-
+ 
     class Meta:
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'

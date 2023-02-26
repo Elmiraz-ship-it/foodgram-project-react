@@ -1,4 +1,7 @@
-from django.http import HttpResponse
+import os
+import tempfile
+
+from django.http import FileResponse
 from django.shortcuts import get_object_or_404
 from django_filters import rest_framework as filters
 from rest_framework import status
@@ -11,8 +14,6 @@ from rest_framework.generics import (
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
-# from rest_framework.decorators import action
-# from rest_framework.viewsets import ViewSet
 
 from api.serializers import (
     CreateRecipeSerializer,
@@ -22,9 +23,10 @@ from api.serializers import (
     RecipeShoppingCartSerializer,
     TagSerializer
 )
-from api.utils.process_download import to_download_shopping_cart
+from api.utils import get_file_payload
 from recipes.models import Ingredient, Recipe, Tag
 from users.models import CustomUser, Follow
+from users.utils import new_follow, unsubscribe_user_from
 
 
 class RecipeApiView(ListCreateAPIView, UpdateAPIView, DestroyAPIView):
@@ -39,10 +41,6 @@ class RecipeApiView(ListCreateAPIView, UpdateAPIView, DestroyAPIView):
         serializer.is_valid(raise_exception=True)
         serializer.save(author=request.user)
         return Response(serializer.validated_data)
-
-    # @action(detail=False, methods=['get'])
-    # def test(self, request):
-    #     return Response({'test':'test'})
 
 
 class TagApiView(ListAPIView):
@@ -85,14 +83,22 @@ class ShoppingCartAPIView(APIView):
         shopping_cart = request.user.shopping_cart.values()
 
         if shopping_cart:
-            path_to_file = to_download_shopping_cart(shopping_cart, request.user.username)
-            if path_to_file:
-                filename = path_to_file.split('\\')[-1]
-                with open(path_to_file, 'r', encoding='utf-8') as file:
-                    response = HttpResponse(file, content_type='text/txt')
-                    response['Content-Disposition'] = f'attachment; filename={filename}'
-                    return response
-
+            data = get_file_payload(shopping_cart)
+            filename = f'{request.user.username}_shopping_cart.txt'
+            try:
+                with tempfile.NamedTemporaryFile(delete=False, mode='w') as file:
+                    for key, value in data.items():
+                        file.write(f'{key}\n')
+                        for k, v in value.items():
+                            file.write(f'{k} {v}\n')
+                response = FileResponse(
+                    open(file.name, 'rb'),
+                    as_attachment=True,
+                    filename=filename
+                )
+                return response
+            finally:
+                os.remove(file.name)
         return Response(status=status.HTTP_200_OK)
 
     def post(self, request, pk=None):
@@ -121,16 +127,16 @@ class SubscribeAPIView(ListCreateAPIView, DestroyAPIView):
     def post(self, request, pk=None):
         if pk is not None:
             author = get_object_or_404(CustomUser, id=pk)
-            new_follow = request.user.new_follow(author)
-            if new_follow is not None:
-                serializer = FollowSerializer(new_follow)
+            follow = new_follow(request.user, author)
+            if follow is not None:
+                serializer = FollowSerializer(follow)
                 return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk=None):
         if pk is not None:
             author = get_object_or_404(CustomUser, id=pk)
-            result = request.user.unsubscribe_from(author)
+            result = unsubscribe_user_from(request.user, author)
             return Response(status=status.HTTP_204_NO_CONTENT)
         if not result:
             return Response(status=status.HTTP_400_BAD_REQUEST)
