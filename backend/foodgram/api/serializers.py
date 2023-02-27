@@ -1,9 +1,9 @@
+from typing import List
+
 from rest_framework import serializers
 
-from recipes.models import Tag, Ingredient, Recipe
-from users.models import Follow
-from users.utils import get_subscribes_on
-from recipes.utils import add_ingredient
+from recipes.models import Tag, Ingredient, Recipe, IngredientToRecipe
+from users.models import Follow, CustomUser
 
 
 class RecipeSerializer(serializers.ModelSerializer):
@@ -60,12 +60,19 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
             author=author
         )
         new.save()
+        to_create = []
         for tag in tags:
             new.tags.add(tag)
         for item in ingredients:
             ingr = Ingredient.objects.get(id=item['id'])
             amount = item['amount']
-            add_ingredient(new, ingr, amount)
+            to_create.append(IngredientToRecipe(
+                    recipe=new,
+                    ingredient=ingr,
+                    amount=amount
+                )
+            )
+        IngredientToRecipe.objects.bulk_create(to_create)
         return new
 
 
@@ -84,12 +91,18 @@ class FollowSerializer(serializers.ModelSerializer):
     recipes = FollowRecipeSerializer(source='author.recipes', many=True)
     recipes_count = serializers.SerializerMethodField()
     
-    def get_recipes_count(self, obj):
+    def get_recipes_count(self, obj: Follow):
         return obj.author.recipes.count()
-
-    def get_is_subscribed(self, obj):
+    
+    @staticmethod
+    def get_subscribes_on(user: CustomUser) -> List[CustomUser]:
+        subs = [f.author for f in user.follower.all().select_related('author')]
+        return subs
+    
+    def get_is_subscribed(self, obj: Follow):
         current_user = obj.user
-        return current_user in get_subscribes_on(obj.author)
+        return current_user in self.get_subscribes_on(obj.author)
+    
 
     class Meta:
         model = Follow
