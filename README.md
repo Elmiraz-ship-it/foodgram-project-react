@@ -1,4 +1,4 @@
-# praktikum_new_diplom
+# foodgram
 <!-- Документация: http://superred.hopto.org/redoc/
 
 Панель администратора: http://superred.hopto.org/admin/ -->

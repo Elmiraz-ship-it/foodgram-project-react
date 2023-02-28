@@ -4,27 +4,28 @@ services:
     image: postgres:13.0-alpine
     volumes:
       - /var/lib/postgresql/data/
-    environment:
-      - POSTGRES_DB=postgres
-      - POSTGRES_USER=postgres
-      - POSTGRES_PASSWORD=qwerty
     ports: 
       - "5432:5432"
     restart: always
-  migration:
-    build:
-      context: ../backend/foodgram
-      dockerfile: Dockerfile
-    command: python manage.py migrate
-    depends_on:
-      - db
+    env_file:
+      - ./.env
   web:
     build:
       context: ../backend/foodgram
       dockerfile: Dockerfile
-    command: python manage.py runserver 0.0.0.0:8000
+    command: >
+      bash -c "python manage.py migrate && gunicorn --bind 0:8000 foodgram.wsgi"
     ports:
       - "8000:8000"
     depends_on:
       - db
-      - migration
+    env_file:
+      - ./.env
+  nginx:
+    image: nginx:1.19.3
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ../frontend/build:/usr/share/nginx/html/
+      - ../docs/:/usr/share/nginx/html/api/docs/
