@@ -27,10 +27,9 @@ DEBUG = os.getenv('DEBUG', True)
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 ALLOWED_HOSTS.append(os.getenv('HOST_IP'))
-
+ALLOWED_HOSTS.append(os.getenv('HOST_NAME'))
 
 # Application definition
-
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
