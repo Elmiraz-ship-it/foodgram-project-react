@@ -160,5 +160,8 @@ DJOSER = {
     'LOGIN_FIELD': 'email',
 }
 
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
 MEDIA_ROOT = f'{BASE_DIR}/media'
 MEDIA_URL = '/media/'
