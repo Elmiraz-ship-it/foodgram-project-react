@@ -28,6 +28,8 @@ DEBUG = os.getenv('DEBUG', True)
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 ALLOWED_HOSTS.append(os.getenv('HOST_IP'))
 ALLOWED_HOSTS.append(os.getenv('HOST_NAME'))
+print('DEBUG setted to', DEBUG)
+print('ALLOWED_HOSTS setted to', ALLOWED_HOSTS)
 
 # Application definition
 INSTALLED_APPS = [
