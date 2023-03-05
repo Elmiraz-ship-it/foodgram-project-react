@@ -14,7 +14,9 @@ services:
       context: ../backend/foodgram
       dockerfile: Dockerfile
     command: >
-      bash -c "python manage.py migrate && gunicorn --bind 0:8000 foodgram.wsgi"
+      bash -c "python manage.py migrate &&
+      python manage.py collectstatic --noinput &&
+      gunicorn --bind 0:8000 foodgram.wsgi"
     ports:
       - "8000:8000"
     depends_on:
