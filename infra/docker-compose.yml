@@ -9,6 +9,14 @@ services:
     restart: always
     env_file:
       - ./.env
+
+  frontend:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile
+    volumes:
+      - ../frontend/:/app/result_build/
+  
   backend:
     build:
       context: ../backend/foodgram
