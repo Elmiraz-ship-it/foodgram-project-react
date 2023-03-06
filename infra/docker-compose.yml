@@ -19,6 +19,9 @@ services:
       gunicorn --bind 0:8000 foodgram.wsgi"
     ports:
       - "8000:8000"
+    volumes: 
+      - static_dir:/app/static/
+      - media_dir:/app/media/
     depends_on:
       - db
     env_file:
@@ -38,3 +41,5 @@ services:
       - backend
 volumes:
   static_volume:
+  static_dir:
+  media_dir: 
