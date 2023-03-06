@@ -9,7 +9,7 @@ services:
     restart: always
     env_file:
       - ./.env
-  web:
+  backend:
     build:
       context: ../backend/foodgram
       dockerfile: Dockerfile
@@ -35,6 +35,6 @@ services:
       - static_volume:/var/html/static/
     restart: always
     depends_on:
-      - web
+      - backend
 volumes:
   static_volume:

@@ -26,8 +26,7 @@ SECRET_KEY = 'django-insecure-2z8)g=0ski))@4c&_ew61ckgl01h)ax_sl@hp4wm511$4^f%**
 DEBUG = os.getenv('DEBUG', True)
 
 ALLOWED_HOSTS = ['localhost', '127.0.0.1']
-ALLOWED_HOSTS.append(os.getenv('HOST_IP'))
-ALLOWED_HOSTS.append(os.getenv('HOST_NAME'))
+ALLOWED_HOSTS.extend([i for i in os.getenv('ALLOWED_HOSTS', default='*')])
 print('DEBUG setted to', DEBUG)
 print('ALLOWED_HOSTS setted to', ALLOWED_HOSTS)
 
