@@ -20,8 +20,10 @@ services:
     ports:
       - "8000:8000"
     volumes: 
-      - static_dir:/app/static/
-      - media_dir:/app/media/
+      # - static_dir:/app/static/
+      # - media_dir:/app/media/
+      - static_dir:/app/static
+      - media_dir:/app/media
     depends_on:
       - db
     env_file:
