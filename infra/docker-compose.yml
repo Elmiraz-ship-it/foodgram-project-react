@@ -5,7 +5,8 @@ services:
     volumes:
       - /var/lib/postgresql/data/
     ports: 
-      - "5432:5432"
+      # - "5432:5432"
+      - 5432:5432
     restart: always
     env_file:
       - ./.env
@@ -26,7 +27,8 @@ services:
       python manage.py collectstatic --noinput &&
       gunicorn --bind 0:8000 foodgram.wsgi"
     ports:
-      - "8000:8000"
+      # - "8000:8000"
+      - 8000:8000
     volumes: 
       - static_dir:/app/static/
       - media_dir:/app/media/
