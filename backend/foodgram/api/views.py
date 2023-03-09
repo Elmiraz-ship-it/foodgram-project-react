@@ -49,7 +49,7 @@ class TagApiView(ListAPIView):
 
 
 class IngredientsFilterSet(filters.FilterSet):
-    name = filters.CharFilter(field_name='title', lookup_expr='icontains')
+    name = filters.CharFilter(field_name='name', lookup_expr='icontains')
     class Meta:
         model = Ingredient
         fields = '__all__'
