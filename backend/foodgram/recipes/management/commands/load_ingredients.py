@@ -13,7 +13,7 @@ class Command(BaseCommand):
         Ingredient.objects.bulk_create(to_create)
 
     def handle(self, *args, **options):
-        filename = f'{settings.BASE_DIR}/../../data/ingredients.json'
+        filename = f'{settings.BASE_DIR}/ingredients.json'
         try:
             with open(filename, encoding='utf-8') as json_file:
                 data = json.load(json_file)
