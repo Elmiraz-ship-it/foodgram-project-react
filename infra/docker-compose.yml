@@ -25,7 +25,7 @@ services:
       - "8000:8000"
     volumes: 
       - static_value:/app/static/admin/
-      - media_dir:/app/media/
+      - media_value:/app/media/
     depends_on:
       - db
     env_file:
@@ -40,9 +40,10 @@ services:
       - ../frontend/build:/usr/share/nginx/html/
       - ../docs/:/usr/share/nginx/html/api/docs/
       - static_value:/var/html/static/admin/
+      - media_value:/var/html/media/
     restart: always
     depends_on:
       - backend
 volumes:
   static_value:
-  media_dir: 
+  media_value: 
