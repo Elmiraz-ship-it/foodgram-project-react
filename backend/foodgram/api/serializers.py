@@ -9,7 +9,7 @@ from users.models import Follow, CustomUser
 class AuthorSerializer(serializers.ModelSerializer):
     class Meta:
         model = CustomUser
-        fields = ['email', 'id', 'username', 'first_name', 'last_name', 'is_subscribed']
+        fields = ['email', 'id', 'username', 'first_name', 'last_name']
 
 
 class RecipeSerializer(serializers.ModelSerializer):
