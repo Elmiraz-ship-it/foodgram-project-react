@@ -6,7 +6,14 @@ from recipes.models import Tag, Ingredient, Recipe, IngredientToRecipe
 from users.models import Follow, CustomUser
 
 
+class AuthorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CustomUser
+        fields = ['email', 'id', 'username', 'first_name', 'last_name', 'is_subscribed']
+
+
 class RecipeSerializer(serializers.ModelSerializer):
+    author = AuthorSerializer(read_only=True)
     class Meta:
         model = Recipe
         fields = '__all__'
