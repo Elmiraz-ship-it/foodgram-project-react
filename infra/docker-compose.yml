@@ -7,8 +7,10 @@ services:
     ports: 
       - "5432:5432"
     restart: always
-    env_file:
-      - ./.env
+    environment:
+      POSTGRES_DB: "postgres"
+      POSTGRES_USER: "postgres"
+      POSTGRES_PASSWORD: "qwerty"
 
   frontend:
     build:
