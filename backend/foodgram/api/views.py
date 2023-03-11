@@ -39,8 +39,9 @@ class RecipeApiView(ListCreateAPIView, UpdateAPIView, DestroyAPIView):
     def post(self, request):
         serializer = CreateRecipeSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.save(author=request.user)
-        return Response(serializer.validated_data)
+        serializer.validated_data['author']=request.user
+        serializer.save()
+        return Response()
 
 
 class TagApiView(ListAPIView):

@@ -52,23 +52,24 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
     ingredients = RecipeIngredientsSerializer(many=True)
     tags = serializers.PrimaryKeyRelatedField(
         queryset=Tag.objects.all(),
-        many=True,
+        many=True
     )
     def create(self, validated_data, **kwargs):
-        author = kwargs.get('author')
+        author = validated_data.get('author')
         ingredients = validated_data.get('ingredients')
         if not ingredients:
             return False
         name = validated_data['name']
         text = validated_data['text']
         cooking_time = validated_data['cooking_time']
-        tags = [Tag.objects.get(pk=id) for id in validated_data['tags']]
+        tags = [id for id in validated_data['tags']]
         new = Recipe(
             name=name,
             text=text,
             cooking_time=cooking_time,
             author=author
         )
+        print(kwargs)
         new.save()
         to_create = []
         for tag in tags:
