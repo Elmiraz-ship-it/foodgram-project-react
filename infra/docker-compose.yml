@@ -3,7 +3,7 @@ services:
   db:
     image: postgres:13.0-alpine
     volumes:
-      - /var/lib/postgresql/data/
+      - data_db:/var/lib/postgresql/data/
     ports: 
       - "5432:5432"
     restart: always
@@ -45,5 +45,6 @@ services:
     depends_on:
       - backend
 volumes:
+  data_db:
   static_value:
   media_value: 
