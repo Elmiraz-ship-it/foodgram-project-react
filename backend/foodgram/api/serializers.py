@@ -50,7 +50,10 @@ class RecipeTagSerializer(serializers.ModelSerializer):
 
 class CreateRecipeSerializer(serializers.ModelSerializer):
     ingredients = RecipeIngredientsSerializer(many=True)
-
+    tags = serializers.PrimaryKeyRelatedField(
+        queryset=Tag.objects.all(),
+        many=True,
+    )
     def create(self, validated_data, **kwargs):
         author = kwargs.get('author')
         ingredients = validated_data.get('ingredients')
@@ -81,6 +84,9 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
             )
         IngredientToRecipe.objects.bulk_create(to_create)
         return new
+    class Meta:
+        model = Recipe
+        fields = ['ingredients', 'tags', 'image', 'name', 'text', 'cooking_time']
 
 
 class FollowRecipeSerializer(serializers.ModelSerializer):
