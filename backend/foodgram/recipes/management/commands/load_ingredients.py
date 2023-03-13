@@ -4,6 +4,7 @@ from recipes.models import Ingredient
 
 import json
 
+
 class Command(BaseCommand):
     def load_to_db(self, data):
         to_create = []

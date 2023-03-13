@@ -14,6 +14,7 @@ class AuthorSerializer(serializers.ModelSerializer):
 
 class RecipeSerializer(serializers.ModelSerializer):
     author = AuthorSerializer(read_only=True)
+
     class Meta:
         model = Recipe
         fields = '__all__'
@@ -54,6 +55,7 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         queryset=Tag.objects.all(),
         many=True
     )
+
     def create(self, validated_data, **kwargs):
         author = validated_data.get('author')
         ingredients = validated_data.get('ingredients')
@@ -78,22 +80,28 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
             ingr = Ingredient.objects.get(id=item['id'])
             amount = item['amount']
             to_create.append(IngredientToRecipe(
-                    recipe=new,
-                    ingredient=ingr,
-                    amount=amount
-                )
-            )
+                recipe=new, ingredient=ingr, amount=amount
+            ))
         IngredientToRecipe.objects.bulk_create(to_create)
         return new
+
     class Meta:
         model = Recipe
-        fields = ['ingredients', 'tags', 'image', 'name', 'text', 'cooking_time']
+        fields = [
+            'ingredients',
+            'tags',
+            'image',
+            'name',
+            'text',
+            'cooking_time'
+        ]
 
 
 class FollowRecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
         fields = ['id', 'name', 'cooking_time', 'image']
+
 
 class FollowSerializer(serializers.ModelSerializer):
     email = serializers.EmailField(source='author.email')
@@ -104,19 +112,18 @@ class FollowSerializer(serializers.ModelSerializer):
     is_subscribed = serializers.SerializerMethodField()
     recipes = FollowRecipeSerializer(source='author.recipes', many=True)
     recipes_count = serializers.SerializerMethodField()
-    
+
     def get_recipes_count(self, obj: Follow):
         return obj.author.recipes.count()
-    
+
     @staticmethod
     def get_subscribes_on(user: CustomUser) -> List[CustomUser]:
         subs = [f.author for f in user.follower.all().select_related('author')]
         return subs
-    
+
     def get_is_subscribed(self, obj: Follow):
         current_user = obj.user
         return current_user in self.get_subscribes_on(obj.author)
-    
 
     class Meta:
         model = Follow

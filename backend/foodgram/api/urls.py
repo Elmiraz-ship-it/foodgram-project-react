@@ -21,7 +21,7 @@ urlpatterns = [
     path('ingredients/', IngredientApiView.as_view()),
     path('ingredients/<int:pk>/', IngredientApiView.as_view()),
 ]
-    
+
 users_urlpatterns = [
     path('auth/', include('djoser.urls.authtoken')),
     path('', include('djoser.urls')),

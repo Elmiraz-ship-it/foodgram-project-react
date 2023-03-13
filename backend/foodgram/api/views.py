@@ -39,7 +39,7 @@ class RecipeApiView(ListCreateAPIView, UpdateAPIView, DestroyAPIView):
     def post(self, request):
         serializer = CreateRecipeSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
-        serializer.validated_data['author']=request.user
+        serializer.validated_data['author'] = request.user
         serializer.save()
         return Response()
 
@@ -51,6 +51,7 @@ class TagApiView(ListAPIView):
 
 class IngredientsFilterSet(filters.FilterSet):
     name = filters.CharFilter(field_name='name', lookup_expr='icontains')
+
     class Meta:
         model = Ingredient
         fields = '__all__'
@@ -87,19 +88,19 @@ class ShoppingCartAPIView(APIView):
             data = get_file_payload(shopping_cart)
             filename = f'{request.user.username}_shopping_cart.txt'
             try:
-                with tempfile.NamedTemporaryFile(delete=False, mode='w') as file:
+                with tempfile.NamedTemporaryFile(delete=False, mode='w') as f:
                     for key, value in data.items():
-                        file.write(f'{key}\n')
+                        f.write(f'{key}\n')
                         for k, v in value.items():
-                            file.write(f'{k} {v}\n')
+                            f.write(f'{k} {v}\n')
                 response = FileResponse(
-                    open(file.name, 'rb'),
+                    open(f.name, 'rb'),
                     as_attachment=True,
                     filename=filename
                 )
                 return response
             finally:
-                os.remove(file.name)
+                os.remove(f.name)
         return Response(status=status.HTTP_200_OK)
 
     def post(self, request, pk=None):
@@ -107,7 +108,9 @@ class ShoppingCartAPIView(APIView):
             recipe = get_object_or_404(Recipe, id=pk)
             request.user.shopping_cart.add(recipe)
             serializer = RecipeShoppingCartSerializer(recipe)
-            return Response(data=serializer.data, status=status.HTTP_201_CREATED)
+            return Response(
+                data=serializer.data, status=status.HTTP_201_CREATED
+            )
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     def delete(self, request, pk=None):
@@ -131,7 +134,9 @@ class SubscribeAPIView(ListCreateAPIView, DestroyAPIView):
             follow = new_follow(request.user, author)
             if follow is not None:
                 serializer = FollowSerializer(follow)
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
+                return Response(
+                    serializer.data, status=status.HTTP_201_CREATED
+                )
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk=None):

@@ -1,4 +1,3 @@
-from django.contrib.auth import get_user_model
 from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 
@@ -8,7 +7,7 @@ from users.models import CustomUser as User
 class Tag(models.Model):
     name = models.CharField(max_length=32, verbose_name='Название')
     color = models.CharField(max_length=32, verbose_name='Цвет')
-    
+
     class Meta:
         verbose_name = 'Тег'
         verbose_name_plural = 'Теги'
@@ -16,7 +15,7 @@ class Tag(models.Model):
 
     def __str__(self) -> str:
         return self.name
-        
+
 
 class Ingredient(models.Model):
     name = models.CharField(max_length=255, verbose_name='Название')
@@ -69,8 +68,12 @@ class Recipe(models.Model):
     )
     cooking_time = models.PositiveIntegerField(
         validators=[
-            MinValueValidator(1, 'Время приготовления не может быть меньше 1 мин'),
-            MaxValueValidator(2000, 'Время приготовления не может быть больше 2000 мин')
+            MinValueValidator(
+                1, 'Время приготовления не может быть меньше 1 мин'
+            ),
+            MaxValueValidator(
+                2000, 'Время приготовления не может быть больше 2000 мин'
+            )
         ],
         verbose_name='Время приготовления, мин.'
     )
@@ -85,8 +88,7 @@ class Recipe(models.Model):
         blank=True,
         verbose_name='Изображение'
     )
-    
- 
+
     class Meta:
         verbose_name = 'Рецепт'
         verbose_name_plural = 'Рецепты'
