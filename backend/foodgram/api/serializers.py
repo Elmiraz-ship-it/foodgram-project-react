@@ -117,8 +117,7 @@ class FollowSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_subscribes_on(user: CustomUser) -> List[CustomUser]:
-        subs = [f.author for f in user.follower.all().select_related('author')]
-        return subs
+        return [f.author for f in user.follower.all().select_related('author')]
 
     def get_is_subscribed(self, obj: Follow):
         current_user = obj.user

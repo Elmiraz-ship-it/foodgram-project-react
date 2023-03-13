@@ -14,8 +14,7 @@ def new_follow(user: CustomUser, author: CustomUser) -> Optional[Follow]:
 
 
 def get_subscribes_on(user: CustomUser) -> List[CustomUser]:
-    subs = [f.author for f in user.follower.all().select_related('author')]
-    return subs
+    return [f.author for f in user.follower.all().select_related('author')]
 
 
 def unsubscribe_user_from(user: CustomUser, author: CustomUser) -> bool:
