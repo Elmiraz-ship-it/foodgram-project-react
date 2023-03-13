@@ -1,30 +1,20 @@
 import os
 import tempfile
 
+from api.serializers import (CreateRecipeSerializer, FollowSerializer,
+                             IngredientSerializer, RecipeSerializer,
+                             RecipeShoppingCartSerializer, TagSerializer)
+from api.utils import get_file_payload
 from django.http import FileResponse
 from django.shortcuts import get_object_or_404
 from django_filters import rest_framework as filters
+from recipes.models import Ingredient, Recipe, Tag
 from rest_framework import status
-from rest_framework.generics import (
-    DestroyAPIView,
-    ListAPIView,
-    ListCreateAPIView,
-    UpdateAPIView
-)
+from rest_framework.generics import (DestroyAPIView, ListAPIView,
+                                     ListCreateAPIView, UpdateAPIView)
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
-from api.serializers import (
-    CreateRecipeSerializer,
-    FollowSerializer,
-    IngredientSerializer,
-    RecipeSerializer,
-    RecipeShoppingCartSerializer,
-    TagSerializer
-)
-from api.utils import get_file_payload
-from recipes.models import Ingredient, Recipe, Tag
 from users.models import CustomUser, Follow
 from users.utils import new_follow, unsubscribe_user_from
 

@@ -1,9 +1,8 @@
 from typing import List
 
+from recipes.models import Ingredient, IngredientToRecipe, Recipe, Tag
 from rest_framework import serializers
-
-from recipes.models import Tag, Ingredient, Recipe, IngredientToRecipe
-from users.models import Follow, CustomUser
+from users.models import CustomUser, Follow
 
 
 class AuthorSerializer(serializers.ModelSerializer):

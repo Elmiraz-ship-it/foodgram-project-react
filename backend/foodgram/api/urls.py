@@ -1,13 +1,6 @@
+from api.views import (FavouriteAPIView, IngredientApiView, RecipeApiView,
+                       ShoppingCartAPIView, SubscribeAPIView, TagApiView)
 from django.urls import include, path
-from api.views import (
-    IngredientApiView,
-    FavouriteAPIView,
-    RecipeApiView,
-    ShoppingCartAPIView,
-    SubscribeAPIView,
-    TagApiView,
-)
-
 
 urlpatterns = [
     path('recipes/', RecipeApiView.as_view()),

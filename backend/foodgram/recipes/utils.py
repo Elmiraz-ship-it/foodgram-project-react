@@ -1,4 +1,4 @@
-from recipes.models import Ingredient, Recipe, IngredientToRecipe
+from recipes.models import Ingredient, IngredientToRecipe, Recipe
 
 
 def add_ingredient(recipe: Recipe, ingr: Ingredient, amount: int) -> None:
