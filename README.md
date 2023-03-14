@@ -11,7 +11,7 @@ REST API для Foodgram, «Продуктовый помощник».
 
 foodgram-project-react
 <!-- https://github.com/<OWNER>/<REPOSITORY>/actions/workflows/<WORKFLOW_FILE>/badge.svg -->
-https://github.com/elmiraz-ship-it/foodgram-project-react/actions/workflows/docker-compose.yml/badge.svg
+https://github.com/elmiraz-ship-it/foodgram-project-react/actions/workflows/workflow.yml/badge.svg
 
 ### Разработчик:
 ```

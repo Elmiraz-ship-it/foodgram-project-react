@@ -19,12 +19,38 @@ from users.models import CustomUser, Follow
 from users.utils import new_follow, unsubscribe_user_from
 
 
+class RecipeFilterSet(filters.FilterSet):
+    tags = filters.AllValuesMultipleFilter(
+        field_name='tags__slug', lookup_expr='contains'
+    )
+    is_favourited = filters.BooleanFilter(method='filter_is_favourited')
+    is_in_shopping_cart = filters.BooleanFilter(
+        method='filter_is_in_shopping_cart'
+    )
+
+    def filter_is_favourited(self, queryset, name, value):
+        if value and not self.request.user.is_anonymous:
+            pass
+        return queryset
+
+    def filter_is_shopping_cart(self, queryset, name, value):
+        if value and not self.request.user.is_anonymous:
+            pass
+        return queryset
+
+    class Meta:
+        model = Recipe
+        fields = ['tags', 'author']
+
+
 class RecipeApiView(ListCreateAPIView, UpdateAPIView, DestroyAPIView):
     serializer_class = RecipeSerializer
     http_method_names = ['get', 'post', 'patch', 'delete']
+    filter_backends = (filters.DjangoFilterBackend,)
+    filterset_class = RecipeFilterSet
 
     def get_queryset(self):
-        return Recipe.objects.filter(author=self.request.user)
+        return Recipe.objects.all()
 
     def post(self, request):
         serializer = CreateRecipeSerializer(data=request.data)

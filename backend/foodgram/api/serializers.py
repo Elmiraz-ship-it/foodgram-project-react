@@ -1,3 +1,4 @@
+from django.forms.models import model_to_dict
 from typing import List
 
 from recipes.models import Ingredient, IngredientToRecipe, Recipe, Tag
@@ -11,14 +12,6 @@ class AuthorSerializer(serializers.ModelSerializer):
         fields = ['email', 'id', 'username', 'first_name', 'last_name']
 
 
-class RecipeSerializer(serializers.ModelSerializer):
-    author = AuthorSerializer(read_only=True)
-
-    class Meta:
-        model = Recipe
-        fields = '__all__'
-
-
 class TagSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
@@ -28,6 +21,33 @@ class TagSerializer(serializers.ModelSerializer):
 class IngredientSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ingredient
+        fields = '__all__'
+
+
+class RecipeSerializer(serializers.ModelSerializer):
+    author = AuthorSerializer(read_only=True)
+    tags = TagSerializer(many=True)
+    ingredients = serializers.SerializerMethodField()
+    is_favourited = serializers.SerializerMethodField()
+    is_in_shopping_cart = serializers.SerializerMethodField()
+
+    def get_ingredients(self, obj):
+        to_return = []
+        ingr_to_recipe = obj.to_recipe.all().select_related('ingredient')
+        for i in ingr_to_recipe:
+            current = model_to_dict(i.ingredient)
+            current['amount'] = i.amount
+            to_return.append(current)
+        return to_return
+
+    def get_is_favourited(self, obj):
+        return obj in self.context.get('request').user.favourite.all()
+
+    def get_is_in_shopping_cart(self, obj):
+        return obj in self.context.get('request').user.shopping_cart.all()
+
+    class Meta:
+        model = Recipe
         fields = '__all__'
 
 
