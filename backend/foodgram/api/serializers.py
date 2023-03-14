@@ -28,7 +28,7 @@ class RecipeSerializer(serializers.ModelSerializer):
     author = AuthorSerializer(read_only=True)
     tags = TagSerializer(many=True)
     ingredients = serializers.SerializerMethodField()
-    is_favourited = serializers.SerializerMethodField()
+    is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
 
     def get_ingredients(self, obj):
@@ -40,7 +40,7 @@ class RecipeSerializer(serializers.ModelSerializer):
             to_return.append(current)
         return to_return
 
-    def get_is_favourited(self, obj):
+    def get_is_favorited(self, obj):
         return obj in self.context.get('request').user.favourite.all()
 
     def get_is_in_shopping_cart(self, obj):

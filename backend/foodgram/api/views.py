@@ -29,13 +29,15 @@ class RecipeFilterSet(filters.FilterSet):
     )
 
     def filter_is_favourited(self, queryset, name, value):
-        if value and not self.request.user.is_anonymous:
-            pass
+        user = self.request.user
+        if value and not user.is_anonymous:
+            return queryset & self.request.user.favourite.all()
         return queryset
 
     def filter_is_shopping_cart(self, queryset, name, value):
-        if value and not self.request.user.is_anonymous:
-            pass
+        user = self.request.user
+        if value and not user.is_anonymous:
+            return queryset & self.request.user.shopping_cart.all()
         return queryset
 
     class Meta:
