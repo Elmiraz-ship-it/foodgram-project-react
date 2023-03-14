@@ -1,6 +1,6 @@
-from django.forms.models import model_to_dict
 from typing import List
 
+from django.forms.models import model_to_dict
 from recipes.models import Ingredient, IngredientToRecipe, Recipe, Tag
 from rest_framework import serializers
 from users.models import CustomUser, Follow
