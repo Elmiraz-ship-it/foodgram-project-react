@@ -1,5 +1,8 @@
 from typing import List
 
+import base64
+
+from django.core.files.base import ContentFile
 from django.forms.models import model_to_dict
 from recipes.models import Ingredient, IngredientToRecipe, Recipe, Tag
 from rest_framework import serializers
@@ -24,12 +27,27 @@ class IngredientSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
+class Base64ImageField(serializers.ImageField):
+    def to_internal_value(self, data):
+        print(data)
+        if isinstance(data, str) and data.startswith('data:image'):
+            format, imgstr = data.split(';base64,')
+            ext = format.split('/')[-1]
+            data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
+
+        return super().to_internal_value(data)
+
+    def to_representation(self, value):
+        return value.url
+
+
 class RecipeSerializer(serializers.ModelSerializer):
     author = AuthorSerializer(read_only=True)
     tags = TagSerializer(many=True)
     ingredients = serializers.SerializerMethodField()
     is_favorited = serializers.SerializerMethodField()
     is_in_shopping_cart = serializers.SerializerMethodField()
+    image = Base64ImageField()
 
     def get_ingredients(self, obj):
         to_return = []
