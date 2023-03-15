@@ -54,6 +54,15 @@ class RecipeApiView(ListCreateAPIView, UpdateAPIView, DestroyAPIView):
     def get_queryset(self):
         return Recipe.objects.all()
 
+    def get(self, request, pk=None):
+        if pk is not None:
+            recipe = get_object_or_404(Recipe, id=pk)
+            serializer = self.serializer_class(
+                recipe, context={'request': request}
+            )
+            return Response(serializer.data)
+        return super().get(request)
+
     def post(self, request):
         serializer = CreateRecipeSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -65,6 +74,16 @@ class RecipeApiView(ListCreateAPIView, UpdateAPIView, DestroyAPIView):
 class TagApiView(ListAPIView):
     serializer_class = TagSerializer
     queryset = Tag.objects.all()
+    pagination_class = None
+
+    def get(self, request, pk=None):
+        if pk is not None:
+            tag = get_object_or_404(Tag, id=pk)
+            serializer = self.serializer_class(
+                tag, context={'request': request}
+            )
+            return Response(serializer.data)
+        return super().get(request)
 
 
 class IngredientsFilterSet(filters.FilterSet):
@@ -80,6 +99,16 @@ class IngredientApiView(ListAPIView):
     queryset = Ingredient.objects.all()
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = IngredientsFilterSet
+    pagination_class = None
+
+    def get(self, request, pk=None):
+        if pk is not None:
+            ingr = get_object_or_404(Ingredient, id=pk)
+            serializer = self.serializer_class(
+                ingr, context={'request': request}
+            )
+            return Response(serializer.data)
+        return super().get(request)
 
 
 class FavouriteAPIView(APIView):
