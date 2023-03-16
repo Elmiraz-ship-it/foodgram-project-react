@@ -25,20 +25,6 @@ class IngredientSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-# class Base64ImageField(serializers.ImageField):
-#     def to_internal_value(self, data):
-#         print(data)
-#         if isinstance(data, str) and data.startswith('data:image'):
-#             format, imgstr = data.split(';base64,')
-#             ext = format.split('/')[-1]
-#             data = ContentFile(base64.b64decode(imgstr), name='temp.' + ext)
-
-#         return super().to_internal_value(data)
-
-#     def to_representation(self, value):
-#         return value.url
-
-
 class RecipeSerializer(serializers.ModelSerializer):
     author = AuthorSerializer(read_only=True)
     tags = TagSerializer(many=True)
@@ -57,10 +43,16 @@ class RecipeSerializer(serializers.ModelSerializer):
         return to_return
 
     def get_is_favorited(self, obj):
-        return obj in self.context.get('request').user.favourite.all()
+        user = self.context.get('request').user
+        if user.is_anonymous:
+            return None
+        return obj in user.favourite.all()
 
     def get_is_in_shopping_cart(self, obj):
-        return obj in self.context.get('request').user.shopping_cart.all()
+        user = self.context.get('request').user
+        if user.is_anonymous:
+            return None
+        return obj in user.shopping_cart.all()
 
     class Meta:
         model = Recipe
