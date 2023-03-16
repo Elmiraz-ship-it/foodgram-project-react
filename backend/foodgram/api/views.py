@@ -67,8 +67,9 @@ class RecipeApiView(ListCreateAPIView, UpdateAPIView, DestroyAPIView):
         serializer = CreateRecipeSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.validated_data['author'] = request.user
-        serializer.save()
-        return Response()
+        new = serializer.save()
+        response = self.serializer_class(new, context={'request': request})
+        return Response(status=status.HTTP_201_CREATED, data=response.data)
 
 
 class TagApiView(ListAPIView):
