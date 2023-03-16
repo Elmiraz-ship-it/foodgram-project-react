@@ -82,6 +82,7 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         queryset=Tag.objects.all(),
         many=True
     )
+    image = Base64ImageField()
 
     def create(self, validated_data, **kwargs):
         author = validated_data.get('author')
@@ -92,13 +93,14 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         text = validated_data['text']
         cooking_time = validated_data['cooking_time']
         tags = [id for id in validated_data['tags']]
+        image = validated_data['image']
         new = Recipe(
             name=name,
             text=text,
             cooking_time=cooking_time,
-            author=author
+            author=author,
+            image=image,
         )
-        print(kwargs)
         new.save()
         to_create = []
         for tag in tags:
