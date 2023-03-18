@@ -4,6 +4,7 @@ from django.forms.models import model_to_dict
 from drf_extra_fields.fields import Base64ImageField
 from recipes.models import Ingredient, IngredientToRecipe, Recipe, Tag
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 from users.models import CustomUser, Follow
 
 
@@ -83,6 +84,15 @@ class CreateRecipeSerializer(serializers.ModelSerializer):
         many=True
     )
     image = Base64ImageField()
+
+    def validate(self, attr):
+        ingredients = attr.get('ingredients')
+        for item in ingredients:
+            if item['amount'] > 2000:
+                raise ValidationError(
+                    detail='Количество не может быть больше 2000'
+                )
+        return super().validate(attr)
 
     def create(self, validated_data, **kwargs):
         author = validated_data.get('author')
