@@ -24,7 +24,7 @@ class RecipeFilterSet(filters.FilterSet):
     tags = filters.AllValuesMultipleFilter(
         field_name='tags__slug', lookup_expr='contains'
     )
-    is_favourited = filters.BooleanFilter(method='filter_is_favourited')
+    is_favorited = filters.BooleanFilter(method='filter_is_favourited')
     is_in_shopping_cart = filters.BooleanFilter(
         method='filter_is_in_shopping_cart'
     )
