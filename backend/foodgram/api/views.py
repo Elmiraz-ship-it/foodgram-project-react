@@ -112,7 +112,11 @@ class IngredientApiView(ListAPIView):
         return super().get(request)
 
 
-class FavouriteAPIView(APIView):
+class FavouriteAPIView(ListAPIView):
+    serializer_class = RecipeSerializer
+    def get_queryset(self):
+        return self.request.user.favourite.all()
+
     def post(self, request, pk=None):
         if pk is not None:
             recipe = get_object_or_404(Recipe, id=pk)
