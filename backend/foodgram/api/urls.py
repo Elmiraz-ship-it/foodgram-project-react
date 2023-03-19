@@ -8,7 +8,7 @@ urlpatterns = [
     # path('recipes/test/', RecipeApiView.as_view()),
     path('recipes/download_shopping_cart/', ShoppingCartAPIView.as_view()),
     path('recipes/<int:pk>/favorite/', FavouriteAPIView.as_view()),
-    path('recipes/favorites/', FavouriteAPIView.as_view()),
+    path('favorites/', FavouriteAPIView.as_view()),
     path('recipes/<int:pk>/shopping_cart/', ShoppingCartAPIView.as_view()),
     path('tags/', TagApiView.as_view()),
     path('tags/<int:pk>/', TagApiView.as_view()),
