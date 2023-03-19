@@ -1,9 +1,10 @@
 import os
 import tempfile
 
-from api.serializers import (CreateRecipeSerializer, FollowSerializer,
-                             IngredientSerializer, RecipeSerializer,
-                             RecipeShoppingCartSerializer, TagSerializer)
+from api.serializers import (CreateRecipeSerializer, FavouriteRecipeSerializer,
+                             FollowSerializer, IngredientSerializer,
+                             RecipeSerializer, RecipeShoppingCartSerializer,
+                             TagSerializer)
 from api.utils import get_file_payload
 from django.http import FileResponse
 from django.shortcuts import get_object_or_404
@@ -114,14 +115,22 @@ class IngredientApiView(ListAPIView):
 
 class FavouriteAPIView(ListAPIView):
     serializer_class = RecipeSerializer
+    pagination_class = None
+
     def get_queryset(self):
         return self.request.user.favourite.all()
 
     def post(self, request, pk=None):
         if pk is not None:
             recipe = get_object_or_404(Recipe, id=pk)
+            if recipe in request.user.favourite.all():
+                return Response(
+                    status=status.HTTP_400_BAD_REQUEST,
+                    data={"errors": "рецепт уже есть в избранном"}
+                )
             request.user.favourite.add(recipe)
-            return Response(status=status.HTTP_201_CREATED)
+            serializer = FavouriteRecipeSerializer(recipe)
+            return Response(status=status.HTTP_201_CREATED, data=serializer.data)
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     def delete(self, request, pk=None):

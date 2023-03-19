@@ -175,3 +175,9 @@ class FollowSerializer(serializers.ModelSerializer):
             'recipes',
             'recipes_count'
         ]
+
+
+class FavouriteRecipeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Recipe
+        fields =['id', 'name', 'image', 'cooking_time']
