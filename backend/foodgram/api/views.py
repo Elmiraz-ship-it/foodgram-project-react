@@ -47,29 +47,36 @@ class RecipeFilterSet(filters.FilterSet):
 
 
 class RecipeApiView(ListCreateAPIView, UpdateAPIView, DestroyAPIView):
-    serializer_class = RecipeSerializer
     http_method_names = ['get', 'post', 'patch', 'delete']
     filter_backends = (filters.DjangoFilterBackend,)
     filterset_class = RecipeFilterSet
 
     def get_queryset(self):
         return Recipe.objects.all()
+    
+    def get_serializer_class(self):
+        serializers = {
+            'GET': RecipeSerializer,
+            'POST': CreateRecipeSerializer,
+            'PATCH': CreateRecipeSerializer
+        }
+        return serializers[self.request.method]
 
     def get(self, request, pk=None):
         if pk is not None:
             recipe = get_object_or_404(Recipe, id=pk)
-            serializer = self.serializer_class(
+            serializer = self.get_serializer_class()(
                 recipe, context={'request': request}
             )
             return Response(serializer.data)
         return super().get(request)
 
     def post(self, request):
-        serializer = CreateRecipeSerializer(data=request.data)
+        serializer = self.get_serializer_class()(data=request.data)
         serializer.is_valid(raise_exception=True)
         serializer.validated_data['author'] = request.user
         new = serializer.save()
-        response = self.serializer_class(new, context={'request': request})
+        response = RecipeSerializer(new, context={'request': request})
         return Response(status=status.HTTP_201_CREATED, data=response.data)
 
 
