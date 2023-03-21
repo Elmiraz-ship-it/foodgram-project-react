@@ -20,7 +20,7 @@ users_urlpatterns = [
     path('auth/', include('djoser.urls.authtoken')),
     path('', include('djoser.urls')),
     path('subscriptions/', SubscribeAPIView.as_view()),
-    path('<int:pk>/subscribe/', SubscribeAPIView.as_view())
+    path('users/<int:pk>/subscribe/', SubscribeAPIView.as_view())
 ]
 
 urlpatterns.extend(users_urlpatterns)
