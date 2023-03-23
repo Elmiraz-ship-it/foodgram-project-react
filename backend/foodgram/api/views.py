@@ -21,15 +21,16 @@ from users.utils import new_follow, unsubscribe_user_from
 
 
 class RecipeFilterSet(filters.FilterSet):
-    tags = filters.CharFilter(method='filter_tags')
     is_favorited = filters.BooleanFilter(method='filter_is_favourited')
     is_in_shopping_cart = filters.BooleanFilter(
         method='filter_is_in_shopping_cart'
     )
 
-    def filter_tags(self, queryset, name, value):
-        tag = Tag.objects.filter(slug=value)
-        return queryset | queryset.filter(tags__in=tag)
+    tags = filters.ModelMultipleChoiceFilter(
+        field_name='tags__slug',
+        to_field_name='slug',
+        queryset=Tag.objects.all()
+    )
 
     def filter_is_favourited(self, queryset, name, value):
         user = self.request.user
