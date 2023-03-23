@@ -180,4 +180,4 @@ class FollowSerializer(serializers.ModelSerializer):
 class FavouriteRecipeSerializer(serializers.ModelSerializer):
     class Meta:
         model = Recipe
-        fields =['id', 'name', 'image', 'cooking_time']
+        fields = ['id', 'name', 'image', 'cooking_time']

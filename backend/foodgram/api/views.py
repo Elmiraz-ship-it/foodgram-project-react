@@ -34,13 +34,13 @@ class RecipeFilterSet(filters.FilterSet):
     def filter_is_favourited(self, queryset, name, value):
         user = self.request.user
         if value and not user.is_anonymous:
-            return queryset & self.request.user.favourite.all()
+            return self.request.user.favourite.all()
         return queryset
 
     def filter_is_in_shopping_cart(self, queryset, name, value):
         user = self.request.user
         if value and not user.is_anonymous:
-            return queryset & self.request.user.shopping_cart.all()
+            return self.request.user.shopping_cart.all()
         return queryset
 
     class Meta:
@@ -55,7 +55,7 @@ class RecipeApiView(ListCreateAPIView, UpdateAPIView, DestroyAPIView):
 
     def get_queryset(self):
         return Recipe.objects.all()
-    
+
     def get_serializer_class(self):
         serializers = {
             'GET': RecipeSerializer,
@@ -71,6 +71,23 @@ class RecipeApiView(ListCreateAPIView, UpdateAPIView, DestroyAPIView):
                 recipe, context={'request': request}
             )
             return Response(serializer.data)
+
+        if request.GET.get('is_favorited') in ('1', 'true'):
+            if request.GET.get('tags') is None:
+                return super().get(request)
+
+            qs = request.user.favourite.filter(
+                tags__slug__in=request.GET.getlist('tags')
+            )
+
+            serializer = self.get_serializer_class()(
+                qs, context={'request': request}, many=True
+            )
+            result_page = self.paginator.paginate_queryset(qs, request)
+            serializer = self.get_serializer_class()(
+                result_page, many=True, context={'request': request}
+            )
+            return self.paginator.get_paginated_response(serializer.data)
         return super().get(request)
 
     def post(self, request):
@@ -139,7 +156,9 @@ class FavouriteAPIView(ListAPIView):
                 )
             request.user.favourite.add(recipe)
             serializer = FavouriteRecipeSerializer(recipe)
-            return Response(status=status.HTTP_201_CREATED, data=serializer.data)
+            return Response(
+                status=status.HTTP_201_CREATED, data=serializer.data
+            )
         return Response(status=status.HTTP_404_NOT_FOUND)
 
     def delete(self, request, pk=None):
